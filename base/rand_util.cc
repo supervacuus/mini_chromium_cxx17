@@ -55,7 +55,7 @@ namespace base {
 
 uint64_t RandUint64() {
   uint64_t number;
-  RandBytes(as_writable_bytes(span_from_ref(number)));
+  RandBytes(byte_span_from_ref(number));
   return number;
 }
 
@@ -134,7 +134,7 @@ std::string RandBytesAsString(size_t length) {
   }
 
   std::string result(length, std::string::value_type());
-  RandBytes(as_writable_bytes(make_span<>(result)));
+  RandBytes(as_writable_bytes(make_span(result)));
   return result;
 }
 

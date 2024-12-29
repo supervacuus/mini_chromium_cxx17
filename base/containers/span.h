@@ -439,6 +439,23 @@ constexpr span<T, 1u> span_from_ref(
   // be a valid span that points to the `single_object`.
   return UNSAFE_BUFFERS(span<T, 1u>(std::addressof(single_object), 1u));
 }
+
+// `byte_span_from_ref` converts a reference to T into a span of uint8_t of
+// length sizeof(T).  This is a non-std helper that is a sugar for
+// `as_writable_bytes(span_from_ref(x))`.
+//
+// Const references are turned into a `span<const T, sizeof(T)>` while mutable
+// references are turned into a `span<T, sizeof(T)>`.
+template <typename T>
+constexpr span<const uint8_t, sizeof(T)> byte_span_from_ref(
+    const T& single_object ABSL_ATTRIBUTE_LIFETIME_BOUND) noexcept {
+  return as_bytes(span_from_ref(single_object));
+}
+template <typename T>
+constexpr span<uint8_t, sizeof(T)> byte_span_from_ref(
+    T& single_object ABSL_ATTRIBUTE_LIFETIME_BOUND) noexcept {
+  return as_writable_bytes(span_from_ref(single_object));
+}
 }  // namespace base
 // EXTENT returns the size of any type that can be converted to a |base::span|
 // with definite extent, i.e. everything that is a contiguous storage of some
